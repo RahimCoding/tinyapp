@@ -14,6 +14,7 @@ console.log(generateRandomString())
 const { request } = require("express");
 const express = require("express");
 const app = express();
+var cookieParser = require('cookie-parser')
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
@@ -24,6 +25,7 @@ const urlDatabase = {
 };
 
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -42,16 +44,17 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username:req.cookies["name"] };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {username: req.cookies["name"]}
+  res.render("urls_new",templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["name"] };
   res.render("urls_show", templateVars);
 });
 
@@ -66,7 +69,6 @@ app.post("/urls", (req, res) => {
    const id = generateRandomString();
    const value = req.body.longURL
    urlDatabase[id] = value  
-
    res.redirect(`/urls/${id}`)
   // res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
@@ -83,6 +85,19 @@ app.post("/urls/:id", (req, res) => {
   const id = req.params.id
   urlDatabase[id] = req.body.newUrl
   res.redirect(`/urls`)
+});
+
+app.post("/login", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+ res.cookie("name", req.body.username)
+ res.redirect("/urls")
+});
+
+
+app.post("/logout", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+ res.clearCookie("name", req.body.username)
+ res.redirect("/urls")
 });
 
 
