@@ -8,8 +8,6 @@ function generateRandomString() {
   return result;
 }
 
-
-
 const { request, response } = require("express");
 const express = require("express");
 const app = express();
@@ -81,14 +79,22 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const id = req.cookies.user_id
+  const id = req.cookies["user_id"]  
+  if(id){
+    return res.redirect("/urls")
+  };
+  console.log(id, "login cookie id")
   const user = users[id]
   const templateVars = { urls: urlDatabase, user: user };
   res.render("login", templateVars);
+
 });
 
 app.get("/urls/new", (req, res) => {
-  const id = req.cookies.user_id
+  const id = req.cookies["user_id"]
+  if(!id){
+    return res.redirect("/login")
+  };
   const user = users[id]
   const templateVars = { user: user }
   res.render("urls_new", templateVars);
@@ -103,24 +109,32 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const id = req.params.id
+  if(!urlDatabase[id]){
+    return res.send("not a valid short ID")
+  }
   const longURL = urlDatabase[id]
   res.redirect(longURL);
 });
 
 app.get("/register", (req, res) => {
-  const id = req.cookies.user_id
+  const id = req.cookies["user_id"]
+  if(id){
+    return res.redirect("/urls")
+  };
   const user = users[id]
   const templateVars = { user: user }
   res.render('registration', templateVars)
 });
 
 app.post("/urls", (req, res) => {
-  // console.log(req.body); // Log the POST request body to the console
+  const cookieID = req.cookies["user_id"]
+  if(!cookieID){
+    return res.send("please log in!!")
+  };
   const id = generateRandomString();
   const value = req.body.longURL
   urlDatabase[id] = value
   res.redirect(`/urls/${id}`)
-  // res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
 app.post("/urls/:id/delete", (req, res) => {
