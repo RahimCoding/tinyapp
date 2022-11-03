@@ -1,19 +1,15 @@
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success">
-    <% if(username){ %>
-      <p> <%= username %></p>
+    <% if(user){ %>
+      <p> <%= user.email %></p>
       <form action="/logout" method="POST" >
         <button> LOGOUT </button>
       </form>
       
-    <% } else{ %>  
-      <form action="/login" method="POST" class = "row gy-2 gx-3 align-items-right"> LOGIN 
-        <div class = "col-auto">
-               <input  placeholder = "username" name="username" type="text"  class ="form-control"> 
-      <button type="submit" class="btn btn-primary"> SUBMIT </button> 
-        </div>
-
-    </form>
+    <% } else{ %> 
+      <p> <%= user %> </p>
+      <a class="col" href="/login">Login </a>
+      <a class="col" href="/register">register</a>
    <% } %>
    
     <a class="navbar-brand" href="/urls">TinyApp</a>
