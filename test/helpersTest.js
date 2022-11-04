@@ -22,11 +22,11 @@ const testUsers = {
 const testURLs = {
   b2xVn2: {
     longURL: "http://www.lighthouselabs.ca",
-    userID: "test",
+    user_id: "test",
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
-    userID: "userRandomID",
+    user_id: "userRandomID",
   },
 };
 
@@ -59,7 +59,7 @@ describe("urlsForUser", function () {
     assert.deepEqual(result, {
       b2xVn2: {
         longURL: "http://www.lighthouselabs.ca",
-        userID: "test",
+        user_id: "test",
       },
     });
   });
