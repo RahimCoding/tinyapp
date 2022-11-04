@@ -1,38 +1,72 @@
-const { assert } = require('chai');
+const { assert } = require("chai");
 
-const { getUserByEmail, generateRandomString } = require('../helpers.js');
+const {
+  getUserByEmail,
+  generateRandomString,
+  urlsForUser,
+} = require("../helpers.js");
 
 const testUsers = {
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
   },
-  "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
 };
 
-describe('getUserByEmail', function() {
-  it('should return a user with valid email', function() {
-    const user = getUserByEmail("user@example.com", testUsers)
+const testURLs = {
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "test",
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "userRandomID",
+  },
+};
+
+describe("getUserByEmail", function () {
+  it("should return a user with valid email", function () {
+    const user = getUserByEmail("user@example.com", testUsers);
     const expectedUserID = "userRandomID";
-    assert.strictEqual(user.id, "userRandomID")
+    assert.strictEqual(user.id, "userRandomID");
     // Write your assert statement here
   });
-  it('should return a undefined with an non-existant email', function() {
-    const user = getUserByEmail("user3@example.com", testUsers)
+  it("should return a undefined with an non-existant email", function () {
+    const user = getUserByEmail("user3@example.com", testUsers);
     const expectedUserID = "userRandomID";
-    assert.isUndefined(user.id, "userRandomID")
+    assert.isUndefined(user.id, "userRandomID");
     // Write your assert statement here
   });
 });
 
-describe("generateRandomString(length)", function() {
-  it("should return string with valid length: 7", function() {
-    const generateRandomStrings = generateRandomString()
-    assert.strictEqual(generateRandomStrings.length, 7)
+describe("generateRandomString()", function () {
+  it("should return string with valid length: 7", function () {
+    const generateRandomStrings = generateRandomString();
+    assert.strictEqual(generateRandomStrings.length, 7);
+  });
+});
+
+describe("urlsForUser", function () {
+  it("Should get urls for the specific user:", function () {
+    const user_id = "test";
+    const result = urlsForUser(user_id, testURLs);
+    assert.deepEqual(result, {
+      b2xVn2: {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "test",
+      },
+    });
+  });
+
+  it("Should return null for the user without a url:", function () {
+    const user_id = "fakeID";
+    const result = urlsForUser(user_id, testURLs);
+    assert.deepEqual(result, {});
   });
 });
