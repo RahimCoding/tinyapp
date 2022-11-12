@@ -1,13 +1,21 @@
+
+// Dev Dependiences //
+
 const express = require("express");
 const app = express();
 let cookieSession = require("cookie-session");
 const PORT = 8080; // default port 8080
 const bcrypt = require("bcryptjs");
+
+//Helper Functions//
+
 const {
   getUserByEmail,
   generateRandomString,
   urlsForUser,
 } = require("./helpers");
+
+// Sets up Cookies //
 
 app.use(
   cookieSession({
@@ -18,6 +26,8 @@ app.use(
 );
 
 app.set("view engine", "ejs");
+
+// URL DATABASE TO STORE URLS //
 
 const urlDatabase = {
   b2xVn2: {
@@ -30,9 +40,13 @@ const urlDatabase = {
   },
 };
 
+// EMPTY USER OBJECT TO STORE USERS//
+
 const users = {};
 
 app.use(express.urlencoded({ extended: true }));
+
+// GET REQUESTS //
 
 app.get("/", (req, res) => {
   const user_id = req.session.user_id;
@@ -126,6 +140,8 @@ app.get("/register", (req, res) => {
   const templateVars = { user: user };
   res.render("registration", templateVars);
 });
+
+// POST REQUESTS //
 
 app.post("/urls", (req, res) => {
   const user_id = req.session.user_id;

@@ -1,10 +1,14 @@
 const { assert } = require("chai");
 
+// FUNCTIONS TO TEST //
+
 const {
   getUserByEmail,
   generateRandomString,
   urlsForUser,
 } = require("../helpers.js");
+
+//TEST DATA//
 
 const testUsers = {
   userRandomID: {
@@ -30,43 +34,54 @@ const testURLs = {
   },
 };
 
+//MOCHA AND CHAI TESTS//
+
 describe("getUserByEmail", function () {
+
   it("should return a user with valid email", function () {
     const user = getUserByEmail("user@example.com", testUsers);
     const expectedUserID = "userRandomID";
     assert.strictEqual(user.id, "userRandomID");
-    // Write your assert statement here
   });
+
   it("should return a undefined with an non-existant email", function () {
     const user = getUserByEmail("user3@example.com", testUsers);
     const expectedUserID = "userRandomID";
     assert.isUndefined(user.id, "userRandomID");
-    // Write your assert statement here
   });
+
 });
 
 describe("generateRandomString()", function () {
+
   it("should return string with valid length: 7", function () {
     const generateRandomStrings = generateRandomString();
     assert.strictEqual(generateRandomStrings.length, 7);
   });
+
 });
 
 describe("urlsForUser", function () {
+
   it("Should get urls for the specific user:", function () {
     const user_id = "test";
+
     const result = urlsForUser(user_id, testURLs);
+
     assert.deepEqual(result, {
       b2xVn2: {
         longURL: "http://www.lighthouselabs.ca",
         user_id: "test",
       },
+
     });
+
   });
 
   it("Should return null for the user without a url:", function () {
     const user_id = "fakeID";
     const result = urlsForUser(user_id, testURLs);
+    
     assert.deepEqual(result, {});
   });
 });

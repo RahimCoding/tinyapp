@@ -1,3 +1,6 @@
+
+// GETS USER INFO VIA THEIR EMAIL //
+
 const getUserByEmail = function (email, users) {
   for (const user in users) {
     if (users[user].email === email) {
@@ -5,7 +8,9 @@ const getUserByEmail = function (email, users) {
     }
   }
   return false;
-}
+};
+
+// GETS THE URLS THE USER CREATED //
 
 const urlsForUser = function (user_id, urlDatabase) {
   let userURLs = {};
@@ -15,7 +20,9 @@ const urlsForUser = function (user_id, urlDatabase) {
     }
   }
   return userURLs;
-}
+};
+
+//GENERATE RANDOM STRING FOR SECURITY//
 
 const generateRandomString = function () {
   let result = "";
@@ -26,7 +33,7 @@ const generateRandomString = function () {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-}
+};
 
 module.exports = {
   getUserByEmail,
