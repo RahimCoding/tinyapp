@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-var cookieSession = require("cookie-session");
+let cookieSession = require("cookie-session");
 const PORT = 8080; // default port 8080
 const bcrypt = require("bcryptjs");
 const {
@@ -35,7 +35,11 @@ const users = {};
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const user_id = req.session.user_id;
+  if (!user_id) {
+    return res.redirect("/login");
+  }
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
@@ -56,8 +60,6 @@ app.get("/urls", (req, res) => {
     return res.send("<a href='/login'> PLEASE LOGIN </a>");
   }
   const user = users[user_id];
-  console.log(urlDatabase);
-  console.log(urlsForUser(user_id,urlDatabase))
   const templateVars = { urls: urlsForUser(user_id, urlDatabase), user: user };
   res.render("urls_index", templateVars);
 });
@@ -67,7 +69,6 @@ app.get("/login", (req, res) => {
   if (user_id) {
     return res.redirect("/urls");
   }
-  console.log(user_id, "login cookie id");
   const user = users[user_id];
   const templateVars = { urls: urlDatabase, user: user };
   res.render("login", templateVars);
@@ -106,7 +107,7 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const url_id = req.params.id;
   const user_id = req.session.user_id;
-  if (!urlDatabase[url_id].longURL) {
+  if (!urlDatabase[url_id]) {
     return res.send("not a valid short ID");
   }
   if (!user_id) {
@@ -134,9 +135,12 @@ app.post("/urls", (req, res) => {
   }
   const id = generateRandomString();
   const value = req.body.longURL;
-  urlDatabase[id] = {};
-  urlDatabase[id].longURL = value;
-  urlDatabase[id].user_id = req.session.user_id;
+
+  urlDatabase[id] = {
+    longURL: value,
+    user_id: req.session.user_id
+  };
+
   res.redirect(`/urls/${id}`);
 });
 
@@ -176,7 +180,6 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log(req.body, "login reqbody"); // Log the POST request body to the console
 
   const user = getUserByEmail(req.body.email, users);
 
@@ -192,14 +195,13 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  console.log(req.body, "logout"); // Log the POST request body to the console
-  req.session.user_id = undefined;
+  req.session = null;
   res.redirect("/login");
 });
 
 app.post("/register", (req, res) => {
-  if (req.body.email === "" || req.body.password === "") {
-    return res.status(400).send("Bad Request");
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).send("Email or Password should not be empty!");
   }
   for (const user in users) {
     if (users[user].email === req.body.email) {
@@ -215,7 +217,6 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: hashedPassword,
   };
-  console.log(users);
   req.session.user_id = id;
   res.redirect("/urls");
 });
