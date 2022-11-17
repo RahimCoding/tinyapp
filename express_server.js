@@ -124,9 +124,6 @@ app.get("/u/:id", (req, res) => {
   if (!urlDatabase[url_id]) {
     return res.send("not a valid short ID");
   }
-  if (!user_id) {
-    return res.send("please log in to view urls!");
-  }
   const longURL = urlDatabase[url_id].longURL;
   res.redirect(longURL);
 });
